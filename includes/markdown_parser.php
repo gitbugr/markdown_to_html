@@ -5,9 +5,9 @@ class MarkdownParser {
 	public $inBlock = null;
 	// we'll use regex to check for markdown patterns and replace using either function or preg_replace
 	public $regex = [
-		'/`{3}/' => '$this->codeBlock',
+		'/`{3}/' => 'self::codeBlock',
 		'/`(.*?)`/' => '<code>\1</code>',
-		'/(#+)(.*)/' => '$this->header',
+		'/(#+)(.*)/' => 'self::header',
 		'/\*\*\*/' => '<hr />',
 		'/(\*\*|__)(.*?)(\*\*|__)/' => '<b>\2</b>',
 		'/(\*|_)(.*?)(\*|_)/' => '<i>\2</i>',
@@ -28,11 +28,11 @@ class MarkdownParser {
 	// This approach could also be used for <blockquote>'s
 	public function codeBlock() {
 		$tag = '<code>';
-		if ($this->$inBlock === 'code') {
-			$this->$inBlock = null;
+		if ($this->inBlock == 'code') {
+			$this->inBlock = null;
 			$tag = '</code>';
 		} else {
-			$this->$inBlock = 'code';
+			$this->inBlock = 'code';
 		}
 		return $tag;
 	}
@@ -41,7 +41,7 @@ class MarkdownParser {
 	public function isInCodeBlock($regex, $string) {
 		if ($regex === '/`{3}/') {
 			return false;
-		} else if ($this->$inBlock === 'code') {
+		} else if ($this->inBlock === 'code') {
 			return true;
 		} else {
 			preg_match('/<code>(.*?)<\/code>/', $string, $codeBlocks, PREG_OFFSET_CAPTURE);

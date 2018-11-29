@@ -2,12 +2,12 @@
 
 class MarkdownParser {
 	// used for checking if currently parsing a block of code
-	public static $inBlock = null;
+	public $inBlock = null;
 	// we'll use regex to check for markdown patterns and replace using either function or preg_replace
-	public static $regex = [
-		'/`{3}/' => 'self::codeBlock',
+	public $regex = [
+		'/`{3}/' => '$this->codeBlock',
 		'/`(.*?)`/' => '<code>\1</code>',
-		'/(#+)(.*)/' => 'self::header',
+		'/(#+)(.*)/' => '$this->header',
 		'/\*\*\*/' => '<hr />',
 		'/(\*\*|__)(.*?)(\*\*|__)/' => '<b>\2</b>',
 		'/(\*|_)(.*?)(\*|_)/' => '<i>\2</i>',
@@ -17,7 +17,7 @@ class MarkdownParser {
 	];
 
 	// Counts #'s to return corrent header tag
-	public static function header($args) {
+	public function header($args) {
 		$hashes = $args[1];
 		$string = $args[2];
 		$headerNumber = strlen($hashes);
@@ -26,13 +26,13 @@ class MarkdownParser {
 
 	// Checks if currently parsing a <code> block and returns relevant tag
 	// This approach could also be used for <blockquote>'s
-	public static function codeBlock() {
+	public function codeBlock() {
 		$tag = '<code>';
-		if (self::$inBlock === 'code') {
-			self::$inBlock = null;
+		if ($this->$inBlock === 'code') {
+			$this->$inBlock = null;
 			$tag = '</code>';
 		} else {
-			self::$inBlock = 'code';
+			$this->$inBlock = 'code';
 		}
 		return $tag;
 	}
@@ -41,7 +41,7 @@ class MarkdownParser {
 	public function isInCodeBlock($regex, $string) {
 		if ($regex === '/`{3}/') {
 			return false;
-		} else if (self::$inBlock === 'code') {
+		} else if ($this->$inBlock === 'code') {
 			return true;
 		} else {
 			preg_match('/<code>(.*?)<\/code>/', $string, $codeBlocks, PREG_OFFSET_CAPTURE);
@@ -60,9 +60,9 @@ class MarkdownParser {
 	}
 
 	// Takes a string and parses it to html syntax
-	public static function parseString($string) {
-		foreach (self::$regex as $regex => $replace) {
-			if(!self::isInCodeBlock($regex, $string)) {
+	public function parseString($string) {
+		foreach ($this->regex as $regex => $replace) {
+			if(!$this->isInCodeBlock($regex, $string)) {
 				if (is_callable ($replace)) {
 					$string = preg_replace_callback ($regex, $replace, $string);
 				} else {

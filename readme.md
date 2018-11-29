@@ -13,7 +13,7 @@ Clone this repo. Navigate to the folder containing the `markdown_to_html.php` fi
 
 You can also remove the `-o FILE` argument to write to the buffer.
 
-All of the parsing logic is stored in the includes/markdown_parser.php file, and so small modification of the markdown_to_html.php file would be required for additional storage options.
+All of the parsing logic is stored in the includes/markdown_parser.php file, and so small modification of the markdown_to_html.php file would be required for additional storage drivers.
 
 ## Note
 
